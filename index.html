@@ -19,24 +19,25 @@
     }
 
     window.onload = function () {
-    //   // Inisialisasi Google Sign-In
-    //   google.accounts.id.initialize({
-    //     client_id: '1029185250778-1to4l9kv4tnu49l5dsgg0gbnjksgphnd.apps.googleusercontent.com',
-    //     callback: handleGoogleCredentialResponse
-    //   });
+      // Inisialisasi Google Sign-In
+      google.accounts.id.initialize({
+        client_id: '1029185250778-1to4l9kv4tnu49l5dsgg0gbnjksgphnd.apps.googleusercontent.com',
+        callback: handleGoogleCredentialResponse
+      });
 
-    //   google.accounts.id.renderButton(
-    //     document.getElementById('googleButton'),
-    //     { theme: 'outline', size: 'large' }
-    //   );
+      google.accounts.id.renderButton(
+        document.getElementById('googleButton'),
+        { theme: 'outline', size: 'large' }
+      );
 
-    //   google.accounts.id.prompt(); // Tampilkan prompt otomatis
+      google.accounts.id.prompt(); // Tampilkan prompt otomatis
 
       // Konfigurasi Apple Sign-In
       AppleID.auth.init({
         clientId: 'com.volatile.app',
         scope: 'name email',
-        redirectURI: 'https://signin-wheat.vercel.app',
+        redirectURI: 'https://signin-wheat.vercel.app', 
+        // state: 'STATE_PARAMETER', 
         usePopup: true // Jika ingin menggunakan popup,
       });
     };
@@ -48,19 +49,26 @@
         // Kirim token ke server backend untuk validasi dan login
       }).catch(error => {
         console.error("Apple Sign-In Error: ", error);
-      }).finally(() => console.log('test'));
+      });
+    }
+
+    function handleCheck(params) {
+        console.log();
     }
   </script>
 </head>
 <body>
   <h1>Login with Google and Apple</h1>
   
+  <button onclick="handleCheck()">Check</button>
+
   <!-- Google Sign-In Button -->
-  <!-- <div id="googleButton"></div> -->
+  <div id="googleButton"></div>
 
   <!-- Apple Sign-In Button -->
   <div id="appleid-signin" class="signin-button" style="margin-top: 20px;">
     <button onclick="handleAppleLogin()">Login with Apple</button>
   </div>
+
 </body>
 </html>
