@@ -15,46 +15,63 @@
     <button id="apple-login">Login with Apple</button>
 
     <script>
-        function handleCredentialResponse(response) {
-          console.log("Encoded JWT ID token: " + response.credential);
-          // check and send token to BE
-        }
-  
-        window.onload = function () {
-          google.accounts.id.initialize({
-            client_id:
-              "443384123553-lql6ulngnqc4e5dblgltmfn7iabid0vd.apps.googleusercontent.com",
-            callback: handleCredentialResponse,
+      function handleCredentialResponse(response) {
+        console.log("Encoded JWT ID token: " + response.credential);
+        // check and send token to BE
+      }
+
+      window.onload = function () {
+        google.accounts.id.initialize({
+          client_id:
+            "443384123553-lql6ulngnqc4e5dblgltmfn7iabid0vd.apps.googleusercontent.com",
+          callback: handleCredentialResponse,
+        });
+
+        google.accounts.id.renderButton(document.getElementById("buttonDiv"), {
+          theme: "outline",
+          size: "large",
+        });
+
+        google.accounts.id.prompt();
+      };
+
+      document.getElementById("apple-login").onclick = function () {
+        const clientId = "com.volatile.app";
+        const redirectURI = "https://signin-wheat.vercel.app";
+
+        AppleID.auth.init({
+          clientId: clientId,
+          redirectURI: redirectURI,
+          usePopup: true,
+        });
+
+        AppleID.auth
+          .signIn()
+          .then((response) => {
+            const idToken = response.id_token;
+            console.log("Response:", JSON.stringify(response));
+            console.log(decodeJWT(response))
+          })
+          .catch((error) => {
+            console.error("Error signing in:", error);
           });
-  
-          google.accounts.id.renderButton(
-            document.getElementById("buttonDiv"),
-            { theme: "outline", size: "large" }
+      };
+      function decodeJWT(token) {
+        try {
+          const base64Url = token.split(".")[1]; // Ambil bagian payload
+          const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/"); // Format ulang
+          const jsonPayload = decodeURIComponent(
+            atob(base64)
+              .split("")
+              .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+              .join("")
           );
-  
-          google.accounts.id.prompt(); 
-        };
-  
-        document.getElementById("apple-login").onclick = function () {
-          const clientId = "com.volatile.app";
-          const redirectURI = "https://signin-wheat.vercel.app";
-  
-          AppleID.auth.init({
-            clientId: clientId,
-            redirectURI: redirectURI,
-            usePopup: true,
-          });
-  
-          AppleID.auth
-            .signIn()
-            .then((response) => {
-              const idToken = response.id_token;
-              console.log("Response:", JSON.stringify(response));
-            })
-            .catch((error) => {
-              console.error("Error signing in:", error);
-            });
-        };
-      </script>
+          return JSON.parse(jsonPayload); // Parse ke objek JSON
+        } catch (error) {
+          console.error("Invalid token:", error);
+          return null;
+        }
+      }
+    </script>
   </body>
 </html>
