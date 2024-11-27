@@ -50,7 +50,7 @@
           .then((response) => {
             const idToken = response.id_token;
             console.log("Response:", JSON.stringify(response));
-            console.log(decodeJWT(idToken))
+            console.log(decodeJWT(response.authorization.id_token))
           })
           .catch((error) => {
             console.error("Error signing in:", error);
